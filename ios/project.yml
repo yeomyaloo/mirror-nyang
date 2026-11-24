@@ -1,0 +1,63 @@
+# XcodeGen 설정. Mac에서 `xcodegen generate`를 실행하면 MirrorNyang.xcodeproj가 만들어진다.
+name: MirrorNyang
+options:
+  bundleIdPrefix: com.mirrornyang
+  deploymentTarget:
+    iOS: "15.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.2.0"
+    CURRENT_PROJECT_VERSION: "3"
+    CODE_SIGN_STYLE: Automatic
+    TARGETED_DEVICE_FAMILY: "1,2"
+
+targets:
+  MirrorNyang:
+    type: application
+    platform: iOS
+    sources:
+      - path: MirrorNyang
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mirrornyang.app
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: MirrorNyang/Info.plist
+      properties:
+        CFBundleDisplayName: 미러냥
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight, UIInterfaceOrientationPortraitUpsideDown]
+        NSLocalNetworkUsageDescription: 같은 Wi-Fi에 있는 TV나 PC가 미러링 화면을 받을 수 있게 하려면 로컬 네트워크 권한이 필요해요.
+        NSBonjourServices: [_mirrornyang._tcp]
+    dependencies:
+      - target: MirrorNyangBroadcast
+    scheme: {}
+
+  MirrorNyangBroadcast:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: MirrorNyangBroadcast
+      - path: Shared
+      # 안드로이드판과 같은 수신 페이지를 그대로 쓴다
+      - path: ../app/src/main/assets/index.html
+        buildPhase: resources
+      - path: ../app/src/main/assets/jmuxer.min.js
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mirrornyang.app.broadcast
+    info:
+      path: MirrorNyangBroadcast/Info.plist
+      properties:
+        CFBundleDisplayName: 미러냥
+        NSLocalNetworkUsageDescription: 같은 Wi-Fi에 있는 TV나 PC가 미러링 화면을 받을 수 있게 하려면 로컬 네트워크 권한이 필요해요.
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.broadcast-services-upload
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).SampleHandler
+          RPBroadcastProcessMode: RPBroadcastProcessModeSampleBuffer

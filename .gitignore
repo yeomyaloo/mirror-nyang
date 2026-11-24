@@ -6,3 +6,10 @@ local.properties
 *.iml
 .DS_Store
 captures/
+
+# iOS: XcodeGen이 만드는 파일
+ios/*.xcodeproj/
+ios/MirrorNyang/Info.plist
+ios/MirrorNyangBroadcast/Info.plist
+ios/build/
+ios/build.log
