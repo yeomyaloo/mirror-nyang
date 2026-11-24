@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 960 400" width="960" height="400" font-family="'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif">
+  <defs>
+    <g id="tv">
+      <rect width="260" height="156" rx="10" fill="#2B2B2B"/>
+      <rect x="8" y="8" width="244" height="140" rx="4" fill="#1C2333"/>
+      <rect x="115" y="156" width="30" height="12" fill="#2B2B2B"/>
+      <rect x="85" y="166" width="90" height="8" rx="4" fill="#2B2B2B"/>
+    </g>
+  </defs>
+  <rect width="960" height="400" rx="24" fill="#FFF6EC"/>
+  <text x="480" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#5B3A29">삼성 TV에서 보기 · Watching on a Samsung TV</text>
+
+  <!-- 1. Internet app -->
+  <g transform="translate(30 80)">
+    <use xlink:href="#tv"/>
+    <g transform="translate(20 96)">
+      <rect width="40" height="36" rx="6" fill="#3B4A6B"/>
+      <rect x="48" width="40" height="36" rx="6" fill="#3B4A6B"/>
+      <rect x="96" width="52" height="36" rx="6" fill="#1A73E8" stroke="#FFFFFF" stroke-width="3"/>
+      <circle cx="122" cy="14" r="8" fill="none" stroke="#FFF" stroke-width="2"/>
+      <path d="M114 14 H130 M122 6 Q116 14 122 22 M122 6 Q128 14 122 22" stroke="#FFF" stroke-width="1.2" fill="none"/>
+      <text x="122" y="32" text-anchor="middle" font-size="7" fill="#FFF">인터넷</text>
+      <rect x="156" width="40" height="36" rx="6" fill="#3B4A6B"/>
+      <rect x="204" width="20" height="36" rx="6" fill="#3B4A6B"/>
+    </g>
+    <text x="130" y="60" text-anchor="middle" font-size="13" fill="#9FB0D0">⌂ 홈 · Home</text>
+  </g>
+  <g transform="translate(250 210)">
+    <rect width="34" height="80" rx="16" fill="#3A3A3A"/>
+    <circle cx="17" cy="22" r="9" fill="#5A5A5A"/><text x="17" y="26" text-anchor="middle" font-size="10" fill="#FFF">⌂</text>
+    <circle cx="17" cy="50" r="6" fill="#5A5A5A"/>
+  </g>
+  <circle cx="54" cy="318" r="15" fill="#FF9F7A"/><text x="54" y="324" text-anchor="middle" font-size="16" font-weight="700" fill="#FFF">1</text>
+  <text x="78" y="324" font-size="15" font-weight="700" fill="#5B3A29">리모컨 홈 → "인터넷" 앱</text>
+  <text x="42" y="346" font-size="12" fill="#8A6A5A">Press Home on the remote, open "Internet"</text>
+
+  <!-- 2. address -->
+  <g transform="translate(350 80)">
+    <use xlink:href="#tv"/>
+    <rect x="8" y="8" width="244" height="26" fill="#E9E9E9"/>
+    <rect x="16" y="13" width="228" height="16" rx="8" fill="#FFFFFF" stroke="#1A73E8" stroke-width="2"/>
+    <text x="26" y="25" font-size="10" fill="#333">192.168.0.12:8080|</text>
+    <g transform="translate(26 60)" fill="#3B4A6B">
+      <rect width="18" height="16" rx="3"/><rect x="22" width="18" height="16" rx="3"/><rect x="44" width="18" height="16" rx="3"/><rect x="66" width="18" height="16" rx="3"/><rect x="88" width="18" height="16" rx="3"/><rect x="110" width="18" height="16" rx="3"/><rect x="132" width="18" height="16" rx="3"/><rect x="154" width="18" height="16" rx="3"/><rect x="176" width="18" height="16" rx="3"/>
+      <rect y="22" width="18" height="16" rx="3"/><rect x="22" y="22" width="18" height="16" rx="3"/><rect x="44" y="22" width="18" height="16" rx="3"/><rect x="66" y="22" width="18" height="16" rx="3"/><rect x="88" y="22" width="18" height="16" rx="3"/><rect x="110" y="22" width="18" height="16" rx="3"/><rect x="132" y="22" width="18" height="16" rx="3"/><rect x="154" y="22" width="40" height="16" rx="3" fill="#1A73E8"/>
+      <text x="174" y="34" text-anchor="middle" font-size="8" fill="#FFF">완료</text>
+    </g>
+  </g>
+  <circle cx="374" cy="318" r="15" fill="#FF9F7A"/><text x="374" y="324" text-anchor="middle" font-size="16" font-weight="700" fill="#FFF">2</text>
+  <text x="398" y="324" font-size="15" font-weight="700" fill="#5B3A29">폰에 뜬 주소 입력</text>
+  <text x="362" y="346" font-size="12" fill="#8A6A5A">Type the address shown on the phone</text>
+  <text x="362" y="366" font-size="11.5" fill="#8A6A5A">⭐ 즐겨찾기에 넣어두면 다음부터 편해요</text>
+  <text x="362" y="382" font-size="11" fill="#A08878">Bookmark it for next time</text>
+
+  <!-- 3. fullscreen -->
+  <g transform="translate(670 80)">
+    <use xlink:href="#tv"/>
+    <rect x="8" y="8" width="244" height="140" rx="4" fill="#000"/>
+    <rect x="104" y="14" width="52" height="128" rx="6" fill="#FFFFFF"/>
+    <circle cx="130" cy="50" r="13" fill="#FF9F7A"/>
+    <path d="M121 48 L122 38 L128 44 Z M139 48 L138 38 L132 44 Z" fill="#FFF6EC"/>
+    <rect x="112" y="76" width="36" height="8" rx="4" fill="#FF9F7A"/>
+    <rect x="112" y="92" width="36" height="5" rx="2" fill="#EEE"/><rect x="112" y="102" width="28" height="5" rx="2" fill="#EEE"/>
+    <rect x="14" y="14" width="72" height="16" rx="8" fill="#FF9F7A"/>
+    <text x="50" y="25" text-anchor="middle" font-size="8" font-weight="700" fill="#5B3A29">😺 미러링 중</text>
+    <rect x="186" y="122" width="58" height="18" rx="9" fill="#FFF6EC" stroke="#FF9F7A" stroke-width="2"/>
+    <text x="215" y="134" text-anchor="middle" font-size="8.5" fill="#5B3A29">전체 화면</text>
+  </g>
+  <circle cx="694" cy="318" r="15" fill="#FF9F7A"/><text x="694" y="324" text-anchor="middle" font-size="16" font-weight="700" fill="#FFF">3</text>
+  <text x="718" y="324" font-size="15" font-weight="700" fill="#5B3A29">"전체 화면" 누르기</text>
+  <text x="682" y="346" font-size="12" fill="#8A6A5A">Press "full screen" (전체 화면)</text>
+  <text x="682" y="366" font-size="11.5" fill="#8A6A5A">안 나오면 주소 끝에 /?mode=jpeg</text>
+  <text x="682" y="382" font-size="11" fill="#A08878">Blank? Add /?mode=jpeg</text>
+
+  <g fill="#FF9F7A">
+    <path d="M304 150 l14 10 l-14 10 z"/>
+    <path d="M624 150 l14 10 l-14 10 z"/>
+  </g>
+</svg>

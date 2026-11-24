@@ -3,6 +3,8 @@
 **Mirror your Android phone or iPhone screen to a smart TV or PC browser over the same Wi-Fi.**
 **같은 Wi-Fi에서 안드로이드 폰이나 아이폰 화면을 스마트 TV나 PC 브라우저로 미러링하는 앱입니다.**
 
+<p align="center"><img src="docs/images/overview.svg" width="100%" alt="MirrorNyang overview: phone to TV/PC browser over Wi-Fi"></p>
+
 [English](#english) · [한국어](#한국어)
 
 ---
@@ -21,14 +23,9 @@ Nothing needs to be installed on the TV or PC. You only type an address into the
 - **Android:** Open the link on your phone, download `mirror-nyang-vX.Y.Z.apk`, and install it. You need to allow installing apps from unknown sources. Works on Android 7.0 and later.
 - **iPhone:** Download `mirror-nyang-vX.Y.Z.ipa`. iPhones can't install apps straight from a link, so you install it with a free tool and your Apple ID. See [iPhone install guide](#iphone-install-guide) below. Works on iOS 15 and later.
 
-```
-[Phone: MirrorNyang]  screen capture → H.264 encoding → tiny web server (:8080)
-        │  same Wi-Fi
-        ▼
-[TV / PC browser]  http://PHONE_IP:8080  →  live screen
-```
-
 ### How to use
+
+<p align="center"><img src="docs/images/android-steps.svg" width="100%" alt="Android steps: install, start mirroring, start now, note the address"></p>
 
 1. Open **MirrorNyang** (미러냥) on your phone and tap **미러링 시작** (Start mirroring).
 2. When Android asks to share or record your screen, tap **Start now**.
@@ -38,6 +35,9 @@ Nothing needs to be installed on the TV or PC. You only type an address into the
    - **PC:** Use the Chrome or Edge address bar.
    - **Samsung TV:** Press Home on the remote, open the **Internet** app, and enter the address.
      Bookmark it to save time next time.
+
+<p align="center"><img src="docs/images/tv-steps.svg" width="100%" alt="Samsung TV: open Internet app, type the address, full screen"></p>
+
 5. When the screen appears, press the **full screen** button (전체 화면).
 6. To stop, tap **미러링 멈추기** (Stop) in the app or **Stop** in the notification.
 
@@ -53,6 +53,8 @@ If high-quality mode shows nothing for 8 seconds, the page switches to compatibi
 ### iPhone
 
 #### How to use on iPhone
+
+<p align="center"><img src="docs/images/ios-use-steps.svg" width="100%" alt="iPhone steps: allow local network, start broadcast, type address, stop"></p>
 
 1. Open **미러냥** once. Allow **Local Network** access when asked. Without it, the TV or PC can't connect.
 2. Tap the round button and choose **Start Broadcast**.
@@ -71,6 +73,8 @@ Apple doesn't let iPhones install apps from a download link the way Android does
 | 7-day limit | Apps signed with a free Apple ID **stop opening after 7 days**. You must refresh them (re-sign). Your data is kept. |
 | 3-app limit | A free Apple ID can have **only 3 sideloaded apps** at a time. AltStore itself counts as one. |
 | Trust step | After installing, you must trust your Apple ID once in Settings. |
+
+<p align="center"><img src="docs/images/ios-install-altstore.svg" width="100%" alt="Installing on iPhone with AltStore in 5 steps"></p>
 
 **Option A: AltStore (recommended, refreshes automatically)**
 
@@ -193,14 +197,9 @@ TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주�
 - **안드로이드:** 폰에서 위 링크를 열고 `mirror-nyang-vX.Y.Z.apk`를 받아 설치합니다. 설치할 때 "출처를 알 수 없는 앱" 설치를 허용해야 합니다. Android 7.0 이상에서 동작합니다.
 - **아이폰:** `mirror-nyang-vX.Y.Z.ipa`를 받습니다. 아이폰은 링크로 바로 설치할 수 없어서, 컴퓨터의 무료 도구와 내 Apple ID로 설치해야 합니다. 아래 [아이폰 설치 방법](#아이폰-설치-방법)을 꼭 읽어 주세요. iOS 15 이상에서 동작합니다.
 
-```
-[폰: 미러냥]  화면 캡처 → H.264 인코딩 → 작은 웹 서버(:8080)
-        │  같은 Wi-Fi
-        ▼
-[TV / PC 브라우저]  http://폰IP:8080  →  실시간 화면
-```
-
 ### 사용법
+
+<p align="center"><img src="docs/images/android-steps.svg" width="100%" alt="안드로이드 사용 단계: 설치, 미러링 시작, 지금 시작, 주소 확인"></p>
 
 1. 폰에서 **미러냥**을 열고 **미러링 시작**을 누릅니다.
 2. "화면을 공유/녹화할까요?" 창이 뜨면 **지금 시작**을 누릅니다.
@@ -210,6 +209,9 @@ TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주�
    - **PC:** 크롬이나 엣지 주소창에 입력합니다.
    - **삼성 TV:** 리모컨 홈 → **인터넷** 앱 → 주소창에 입력합니다.
      한 번 연 다음 즐겨찾기에 넣어두면 다음부터 편합니다.
+
+<p align="center"><img src="docs/images/tv-steps.svg" width="100%" alt="삼성 TV: 인터넷 앱, 주소 입력, 전체 화면"></p>
+
 5. 화면이 나오면 **전체 화면** 버튼을 누릅니다. 리모컨으로 버튼을 선택하고 확인을 누르면 됩니다.
 6. 끝낼 때는 앱의 **미러링 멈추기** 버튼이나 알림의 **멈추기** 버튼을 누릅니다.
 
@@ -224,6 +226,8 @@ TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주�
 ### 아이폰
 
 #### 아이폰에서 쓰는 법
+
+<p align="center"><img src="docs/images/ios-use-steps.svg" width="100%" alt="아이폰 사용 단계: 로컬 네트워크 허용, 방송 시작, 주소 입력, 중단"></p>
 
 1. **미러냥** 앱을 한 번 엽니다. **로컬 네트워크** 권한을 물어보면 **허용**을 누릅니다. 허용하지 않으면 TV나 PC가 접속할 수 없습니다.
 2. 동그라미 버튼을 누르고 **방송 시작**을 누릅니다.
@@ -242,6 +246,8 @@ TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주�
 | 7일 제한 | 무료 Apple ID로 설치한 앱은 **7일이 지나면 열리지 않습니다.** 그 전에 갱신(다시 서명)해야 합니다. 앱 데이터는 지워지지 않습니다. |
 | 3개 제한 | 무료 Apple ID로는 이렇게 설치한 앱을 **동시에 3개까지만** 쓸 수 있습니다. AltStore도 1개로 칩니다. |
 | 개발자 신뢰 | 설치한 뒤 설정에서 내 Apple ID를 한 번 "신뢰"해야 합니다. |
+
+<p align="center"><img src="docs/images/ios-install-altstore.svg" width="100%" alt="AltStore로 아이폰에 설치하는 5단계"></p>
 
 **방법 A: AltStore (추천, 자동 갱신)**
 
