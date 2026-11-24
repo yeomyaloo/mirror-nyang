@@ -1,9 +1,130 @@
-# 🐱 미러냥 (MirrorNyang)
+# 🐱 MirrorNyang (미러냥)
+
+**Mirror your Android phone screen to a smart TV or PC browser over the same Wi-Fi.**
+**같은 Wi-Fi에서 안드로이드 폰 화면을 스마트 TV나 PC 브라우저로 미러링하는 앱입니다.**
+
+[English](#english) · [한국어](#한국어)
+
+---
+
+## English
+
+MirrorNyang streams your Android phone screen to **any browser on the same Wi-Fi**, such as a Samsung TV's built-in browser or Chrome/Edge on a PC.
+Nothing needs to be installed on the TV or PC. You only type an address into the browser.
+
+("Nyang" is the Korean sound a cat makes, like "meow". 🐾)
+
+### 📥 Download
+
+**[Get the latest APK (Releases)](https://github.com/yeomyaloo/mirror-nyang/releases/latest)**
+
+- Open the link on your phone, download `mirror-nyang-vX.Y.Z.apk`, and install it.
+- You need to allow installing apps from unknown sources.
+- Works on Android 7.0 and later.
+
+```
+[Phone: MirrorNyang]  screen capture → H.264 encoding → tiny web server (:8080)
+        │  same Wi-Fi
+        ▼
+[TV / PC browser]  http://PHONE_IP:8080  →  live screen
+```
+
+### How to use
+
+1. Open **MirrorNyang** (미러냥) on your phone and tap **미러링 시작** (Start mirroring).
+2. When Android asks to share or record your screen, tap **Start now**.
+   On Android 14 and later, choose "Share entire screen".
+3. An address like `http://192.168.0.12:8080` appears on the phone.
+4. Type that address into a browser.
+   - **PC:** Use the Chrome or Edge address bar.
+   - **Samsung TV:** Press Home on the remote, open the **Internet** app, and enter the address.
+     Bookmark it to save time next time.
+5. When the screen appears, press the **full screen** button (전체 화면).
+6. To stop, tap **미러링 멈추기** (Stop) in the app or **Stop** in the notification.
+
+#### Two modes
+
+| Mode | Address | Notes |
+|---|---|---|
+| High quality (default) | `http://PHONE_IP:8080` | H.264 video. Smooth, with low latency (target under 0.5 s). |
+| Compatibility | `http://PHONE_IP:8080/?mode=jpeg` | A stream of JPEG images (about 12 fps). Works on old TV browsers. |
+
+If high-quality mode shows nothing for 8 seconds, the page switches to compatibility mode automatically. You can also switch with the button in the bottom-right corner.
+
+### Building the APK
+
+Requirements: JDK 17 and the Android SDK (platform `android-30`, build-tools `30.0.3`).
+Point `sdk.dir` in `local.properties` to your SDK, or set `ANDROID_HOME`.
+
+```powershell
+.\gradlew.bat assembleDebug
+```
+
+The APK is written to `app\build\outputs\apk\debug\app-debug.apk`.
+
+#### Releasing a new version
+
+1. In `app/build.gradle`, increase `versionCode` by 1 and update `versionName`.
+2. Commit, then push a tag such as `v0.2.0`.
+
+```powershell
+git tag v0.2.0
+```
+
+```powershell
+git push origin main --tags
+```
+
+GitHub Actions (`.github/workflows/release.yml`) builds the APK and attaches it to the release as `mirror-nyang-v0.2.0.apk`.
+
+The APK is signed with a public debug key kept in the repo (`app/debug.keystore`). Every build has the same signature, so users can install new versions over old ones. This key is not secret, so create a separate release key before publishing to the Play Store.
+
+### Installing on a phone
+
+- **Without a cable:** Send the APK to your phone (messenger, Google Drive, USB), tap it, and allow installs from unknown sources. If Play Protect warns you, choose **Install anyway**. The warning appears because this is a self-built debug app.
+- **With adb:** Turn on USB debugging, connect the phone, and run the command below.
+
+```powershell
+adb install -r app\build\outputs\apk\debug\app-debug.apk
+```
+
+### Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| The browser can't connect | Make sure both devices are on the same Wi-Fi. Turn off "AP isolation" or "guest network" on the router. |
+| No address is shown | Connect the phone to Wi-Fi and start again. |
+| Black screen only | Add `/?mode=jpeg` to the address to use compatibility mode. |
+| Netflix or similar apps show black | Android blocks capturing DRM-protected content. This is expected. |
+| The picture shrinks when the phone rotates | In this MVP, the size is fixed at the orientation you started in. Start in landscape if you want landscape. |
+
+### How it works
+
+- `MirrorService` runs as a `mediaProjection` foreground service.
+- `H264Encoder` encodes the screen with MediaCodec (H.264 Baseline, 720p, 4 Mbps).
+- `JpegCapturer` produces JPEG frames for compatibility mode (960 px, about 12 fps).
+- `StreamServer` is a small HTTP + WebSocket server written from scratch, with no external libraries.
+- The receiver page (`assets/index.html`) plays H.264 through MSE with [jmuxer](https://github.com/samirkumardas/jmuxer) (MIT). It is written in ES5 so old TV browsers can run it.
+- Encoding starts only when the first viewer connects.
+- A slow viewer drops queued frames and resumes from the next key frame, and the page jumps to the live edge when its buffer grows past 0.5 s. So latency does not build up.
+
+> ⚠️ Anyone on the same Wi-Fi who knows the address can watch. Don't use it on public Wi-Fi. A PIN is planned.
+
+### Roadmap
+
+- Audio (Android 10 and later, AudioPlaybackCapture)
+- Following screen rotation
+- Connection PIN
+- Quality and bitrate settings
+
+---
+
+## 한국어
 
 같은 Wi-Fi에 있는 **삼성 TV나 PC 브라우저로 안드로이드 폰 화면을 보내는** 미러링 앱입니다.
 TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주소만 입력하면 됩니다.
 
-## 📥 다운로드
+### 📥 다운로드
 
 **[최신 APK 받기 (Releases)](https://github.com/yeomyaloo/mirror-nyang/releases/latest)**
 
@@ -18,7 +139,7 @@ TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주�
 [TV / PC 브라우저]  http://폰IP:8080  →  실시간 화면
 ```
 
-## 사용법
+### 사용법
 
 1. 폰에서 **미러냥**을 열고 **미러링 시작**을 누릅니다.
 2. "화면을 공유/녹화할까요?" 창이 뜨면 **지금 시작**을 누릅니다.
@@ -31,7 +152,7 @@ TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주�
 5. 화면이 나오면 **전체 화면** 버튼을 누릅니다. 리모컨으로 버튼을 선택하고 확인을 누르면 됩니다.
 6. 끝낼 때는 앱의 **미러링 멈추기** 버튼이나 알림의 **멈추기** 버튼을 누릅니다.
 
-### 두 가지 모드
+#### 두 가지 모드
 | 모드 | 주소 | 특징 |
 |---|---|---|
 | 고화질 (기본) | `http://폰IP:8080` | H.264 영상입니다. 부드럽고 지연이 적습니다(목표 0.5초 이하). |
@@ -39,7 +160,7 @@ TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주�
 
 고화질 모드로 8초 동안 화면이 안 나오면 호환 모드로 자동으로 바뀝니다. 화면 오른쪽 아래 버튼으로 직접 바꿀 수도 있습니다.
 
-## APK 빌드 (Windows)
+### APK 빌드 (Windows)
 
 이 PC에 이미 있는 도구만 씁니다. 새로 설치할 것은 없습니다.
 
@@ -66,7 +187,7 @@ Gradle이 설치되어 있지 않은 PC에서는 `.\gradlew.bat assembleDebug`�
 
 첫 빌드는 Gradle이 Android Gradle Plugin과 Kotlin 같은 라이브러리를 받아 `~/.gradle` 캐시에 저장하느라 몇 분 걸립니다.
 
-### 새 버전 배포 (GitHub Releases)
+#### 새 버전 배포 (GitHub Releases)
 
 1. `app/build.gradle`의 `versionCode`를 1 올리고, `versionName`도 새 버전으로 바꿉니다.
 2. 커밋한 뒤 태그를 붙여 push합니다.
@@ -83,7 +204,7 @@ git push origin main --tags
 
 APK는 저장소에 들어 있는 공개 디버그 키(`app/debug.keystore`)로 서명합니다. 그래서 누가 빌드해도 서명이 같고, 사용자는 새 버전을 덮어 설치할 수 있습니다. 비밀 키가 아니므로 Play 스토어에 올릴 때는 별도의 릴리스 키를 만들어야 합니다.
 
-## 폰에 설치
+### 폰에 설치
 
 **방법 A: 파일로 옮기기 (케이블이나 adb 없이)**
 1. `app-debug.apk`를 카카오톡 "나와의 채팅", 구글 드라이브, USB 등으로 폰에 옮깁니다.
@@ -97,7 +218,7 @@ APK는 저장소에 들어 있는 공개 디버그 키(`app/debug.keystore`)로 
 & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" install -r app\build\outputs\apk\debug\app-debug.apk
 ```
 
-## 테스트 체크리스트
+### 테스트 체크리스트
 
 - [ ] 폰과 PC/TV가 **같은 Wi-Fi**에 연결되어 있습니다. 게스트 Wi-Fi는 기기끼리 통신을 막는 경우가 많습니다.
 - [ ] 앱에서 시작을 누르면 주소와 QR 코드가 뜹니다.
@@ -113,7 +234,7 @@ APK는 저장소에 들어 있는 공개 디버그 키(`app/debug.keystore`)로 
 & "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe" logcat -s MirrorNyang MirrorNyang/Server MirrorNyang/H264
 ```
 
-## 문제 해결
+### 문제 해결
 
 | 증상 | 해결 |
 |---|---|
@@ -123,7 +244,7 @@ APK는 저장소에 들어 있는 공개 디버그 키(`app/debug.keystore`)로 
 | 넷플릭스 같은 앱 화면이 검게 나옴 | 저작권 보호(DRM) 화면은 안드로이드가 캡처를 막습니다. 정상 동작입니다. |
 | 폰을 가로로 돌리면 화면이 작아짐 | MVP에서는 시작할 때의 방향으로 크기가 고정됩니다. 가로로 쓰려면 폰을 가로로 둔 상태에서 시작하세요. |
 
-## 구조
+### 구조
 
 ```
 app/src/main/
@@ -143,7 +264,7 @@ app/src/main/
 - 네트워크가 느린 수신기는 쌓인 프레임을 버리고 다음 키프레임부터 다시 받습니다. 그래서 지연이 계속 쌓이지 않습니다.
 - 수신 페이지는 버퍼가 0.5초 넘게 쌓이면 맨 끝으로 건너뜁니다.
 
-## 설계 결정 메모
+### 설계 결정 메모
 
 - **수신은 브라우저로 합니다.** 삼성 TV나 PC에 따로 앱을 깔 필요가 없습니다.
   - Miracast는 서드파티 앱에 API가 없어서 쓸 수 없습니다.
@@ -153,7 +274,7 @@ app/src/main/
 - **기기는 주소를 화면에 표시해서 연결합니다.** 브라우저는 mDNS 탐색을 할 수 없기 때문입니다. 카메라가 있는 기기를 위해 QR 코드도 같이 보여줍니다.
 - **compileSdk/targetSdk는 30입니다.** 이 PC에 설치된 SDK에 맞춘 값입니다. APK로 직접 배포하므로 Play 스토어의 targetSdk 요구사항과는 상관없습니다.
 
-## 다음 단계 아이디어
+### 다음 단계 아이디어
 
 - 소리 전송 (Android 10 이상, AudioPlaybackCapture)
 - 화면 회전 따라가기
