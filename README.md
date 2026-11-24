@@ -3,6 +3,14 @@
 같은 Wi-Fi에 있는 **삼성 TV나 PC 브라우저로 안드로이드 폰 화면을 보내는** 미러링 앱입니다.
 TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주소만 입력하면 됩니다.
 
+## 📥 다운로드
+
+**[최신 APK 받기 (Releases)](https://github.com/yeomyaloo/mirror-nyang/releases/latest)**
+
+- 폰에서 위 링크를 열고 `mirror-nyang-vX.Y.Z.apk`를 받아 설치합니다.
+- 설치할 때 "출처를 알 수 없는 앱" 설치를 허용해야 합니다.
+- Android 7.0 이상에서 동작합니다.
+
 ```
 [폰: 미러냥]  화면 캡처 → H.264 인코딩 → 작은 웹 서버(:8080)
         │  같은 Wi-Fi
@@ -52,9 +60,28 @@ cd $env:USERPROFILE\Documents\GitHub\mirror-nyang
 gradle assembleDebug
 ```
 
+Gradle이 설치되어 있지 않은 PC에서는 `.\gradlew.bat assembleDebug`를 실행하면 됩니다. 처음 한 번 Gradle 7.6.3을 자동으로 받습니다.
+
 빌드가 끝나면 APK가 `app\build\outputs\apk\debug\app-debug.apk`에 생깁니다.
 
 첫 빌드는 Gradle이 Android Gradle Plugin과 Kotlin 같은 라이브러리를 받아 `~/.gradle` 캐시에 저장하느라 몇 분 걸립니다.
+
+### 새 버전 배포 (GitHub Releases)
+
+1. `app/build.gradle`의 `versionCode`를 1 올리고, `versionName`도 새 버전으로 바꿉니다.
+2. 커밋한 뒤 태그를 붙여 push합니다.
+
+```powershell
+git tag v0.2.0
+```
+
+```powershell
+git push origin main --tags
+```
+
+태그가 올라가면 GitHub Actions(`.github/workflows/release.yml`)가 APK를 빌드해서 Release에 `mirror-nyang-v0.2.0.apk`로 첨부합니다.
+
+APK는 저장소에 들어 있는 공개 디버그 키(`app/debug.keystore`)로 서명합니다. 그래서 누가 빌드해도 서명이 같고, 사용자는 새 버전을 덮어 설치할 수 있습니다. 비밀 키가 아니므로 Play 스토어에 올릴 때는 별도의 릴리스 키를 만들어야 합니다.
 
 ## 폰에 설치
 
