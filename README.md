@@ -7,6 +7,17 @@
 
 [English](#english) · [한국어](#한국어)
 
+## 📖 Step-by-step guides · 그림으로 보는 설명서
+
+New here? Follow a guide below. Every step has a big picture and a detailed explanation.
+처음 쓰신다면 아래 설명서를 따라 하세요. 단계마다 큰 그림과 자세한 설명이 있습니다.
+
+| | English | 한국어 |
+|---|---|---|
+| 📱 Android · 안드로이드 | [Android guide](docs/guide-android.en.md) | [안드로이드 설명서](docs/guide-android.ko.md) |
+| 🍎 iPhone · 아이폰 | [iPhone guide](docs/guide-iphone.en.md) | [아이폰 설명서](docs/guide-iphone.ko.md) |
+
+
 ---
 
 ## English
@@ -17,6 +28,8 @@ Nothing needs to be installed on the TV or PC. You only type an address into the
 ("Nyang" is the Korean sound a cat makes, like "meow". 🐾)
 
 ### 📥 Download
+
+> 📖 For pictures of every step, see the [Android guide](docs/guide-android.en.md) and the [iPhone guide](docs/guide-iphone.en.md).
 
 **[Get the latest release](https://github.com/yeomyaloo/mirror-nyang/releases/latest)**
 
@@ -191,6 +204,8 @@ adb install -r app\build\outputs\apk\debug\app-debug.apk
 TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주소만 입력하면 됩니다.
 
 ### 📥 다운로드
+
+> 📖 단계별 그림은 [안드로이드 설명서](docs/guide-android.ko.md)와 [아이폰 설명서](docs/guide-iphone.ko.md)를 보세요.
 
 **[최신 버전 받기 (Releases)](https://github.com/yeomyaloo/mirror-nyang/releases/latest)**
 
