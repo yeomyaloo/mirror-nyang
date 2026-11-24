@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미러냥</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden;
+    font-family: -apple-system, "Segoe UI", "Malgun Gothic", "Samsung One", sans-serif; }
+  #stage { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex;
+    align-items: center; justify-content: center; }
+  #player, #jpg { max-width: 100%; max-height: 100%; width: 100%; height: 100%;
+    object-fit: contain; display: none; background: #000; }
+  #badge { position: fixed; top: 16px; left: 16px; padding: 10px 18px; border-radius: 999px;
+    background: rgba(255, 159, 122, .92); color: #5B3A29; font-size: 18px; font-weight: bold;
+    transition: opacity .6s; z-index: 2; }
+  #badge.hide { opacity: 0; }
+  #bar { position: fixed; right: 16px; bottom: 16px; z-index: 2; transition: opacity .6s; }
+  #bar.hide { opacity: 0; }
+  #bar a, #bar button { display: inline-block; margin-left: 8px; padding: 10px 16px; border: 0;
+    border-radius: 999px; background: rgba(255, 246, 236, .9); color: #5B3A29; font-size: 16px;
+    text-decoration: none; cursor: pointer; }
+  #bar a:focus, #bar button:focus { outline: 3px solid #FF9F7A; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <video id="player" autoplay muted playsinline></video>
+  <img id="jpg" alt="">
+</div>
+<div id="badge">🐱 미러냥 연결 중…</div>
+<div id="bar">
+  <button id="fs" type="button">전체 화면</button>
+  <a id="switch" href="#">호환 모드</a>
+</div>
+
+<script src="/jmuxer.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  // 구형 TV 브라우저도 돌 수 있도록 ES5 문법만 사용한다.
+  var badge = document.getElementById('badge');
+  var bar = document.getElementById('bar');
+  var video = document.getElementById('player');
+  var img = document.getElementById('jpg');
+  var switchLink = document.getElementById('switch');
+
+  function mseSupported() {
+    var MS = window.MediaSource || window.WebKitMediaSource;
+    return !!(MS && MS.isTypeSupported && MS.isTypeSupported('video/mp4; codecs="avc1.42E01E"') && window.JMuxer);
+  }
+
+  var forced = /[?&]mode=jpeg/.test(location.search);
+  var mode = (!forced && mseSupported()) ? 'h264' : 'jpeg';
+
+  switchLink.textContent = mode === 'h264' ? '호환 모드(JPEG)' : '고화질 모드(H.264)';
+  switchLink.href = mode === 'h264' ? '/?mode=jpeg' : '/?mode=h264';
+
+  var hideTimer = null;
+  function say(text, autoHide) {
+    badge.textContent = text;
+    badge.className = '';
+    bar.className = '';
+    if (hideTimer) clearTimeout(hideTimer);
+    if (autoHide) {
+      hideTimer = setTimeout(function () { badge.className = 'hide'; bar.className = 'hide'; }, 3000);
+    }
+  }
+  // 리모컨/마우스를 움직이면 버튼을 다시 보여준다
+  function wake() { if (badge.className === 'hide') say(badge.textContent, true); }
+  document.addEventListener('mousemove', wake);
+  document.addEventListener('keydown', wake);
+
+  function goFullscreen() {
+    var el = document.documentElement;
+    var fn = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen || el.msRequestFullscreen;
+    if (fn) { try { fn.call(el); } catch (e) {} }
+  }
+  document.getElementById('fs').onclick = goFullscreen;
+  document.getElementById('stage').ondblclick = goFullscreen;
+
+  function wsUrl(path) { return 'ws://' + location.host + path; }
+
+  function reconnectLater() {
+    say('😿 연결이 끊겼어요. 다시 연결하는 중…', false);
+    setTimeout(function () { location.reload(); }, 2000);
+  }
+
+  // ------------------------------------------------------------ H.264 모드
+  function startH264() {
+    video.style.display = 'block';
+    var jmuxer = new JMuxer({
+      node: 'player',
+      mode: 'video',
+      flushingTime: 0,
+      fps: 30,
+      clearBuffer: true,
+      debug: false,
+      onError: function () { /* jmuxer가 내부적으로 버퍼를 재설정한다 */ }
+    });
+    var gotData = false;
+    var ws = new WebSocket(wsUrl('/ws/h264'));
+    ws.binaryType = 'arraybuffer';
+    ws.onopen = function () { say('🐱 연결됨! 화면을 기다리는 중…', false); };
+    ws.onmessage = function (e) {
+      gotData = true;
+      jmuxer.feed({ video: new Uint8Array(e.data) });
+    };
+    ws.onclose = reconnectLater;
+
+    var shown = false;
+    video.addEventListener('playing', function () {
+      if (!shown) { shown = true; say('😺 미러링 중', true); }
+    });
+
+    // 지연 따라잡기: 버퍼가 쌓이면 맨 끝으로 점프한다 (목표 지연 0.5초 이하)
+    setInterval(function () {
+      var b = video.buffered;
+      if (!b || b.length === 0) return;
+      var end = b.end(b.length - 1);
+      if (end - video.currentTime > 0.5) video.currentTime = end - 0.05;
+      if (video.paused) { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
+    }, 500);
+
+    // 8초가 지나도 재생이 시작되지 않으면 호환 모드로 자동 전환
+    setTimeout(function () {
+      if (!shown && gotData && video.readyState < 2) {
+        say('이 브라우저는 고화질 모드가 어려워요. 호환 모드로 바꿀게요…', false);
+        setTimeout(function () { location.href = '/?mode=jpeg'; }, 1500);
+      }
+    }, 8000);
+  }
+
+  // ------------------------------------------------------------- JPEG 모드
+  function startJpeg() {
+    img.style.display = 'block';
+    var URL_ = window.URL || window.webkitURL;
+    var lastUrl = null;
+    var busy = false;
+    var pending = null;
+    var first = true;
+
+    function show(buf) {
+      busy = true;
+      var url = URL_.createObjectURL(new Blob([buf], { type: 'image/jpeg' }));
+      img.onload = img.onerror = function () {
+        if (lastUrl) URL_.revokeObjectURL(lastUrl);
+        lastUrl = url;
+        busy = false;
+        if (first) { first = false; say('😺 미러링 중 (호환 모드)', true); }
+        if (pending) { var next = pending; pending = null; show(next); }
+      };
+      img.src = url;
+    }
+
+    var ws = new WebSocket(wsUrl('/ws/jpeg'));
+    ws.binaryType = 'arraybuffer';
+    ws.onopen = function () { say('🐱 연결됨! 화면을 기다리는 중…', false); };
+    ws.onmessage = function (e) {
+      if (busy) { pending = e.data; return; } // 그리는 중이면 최신 프레임만 남긴다
+      show(e.data);
+    };
+    ws.onclose = reconnectLater;
+  }
+
+  if (mode === 'h264') startH264(); else startJpeg();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">미러냥</string>
+    <string name="tagline">폰 화면을 TV·PC로 냥~ 하고 보내요</string>
+    <string name="start">미러링 시작</string>
+    <string name="stop">미러링 멈추기</string>
+    <string name="status_idle">쉬는 중이에요 😺</string>
+    <string name="status_running">미러링 중! 아래 주소를 TV나 PC 브라우저에 입력하세요</string>
+    <string name="no_wifi">Wi-Fi 주소를 찾지 못했어요. Wi-Fi에 연결했는지 확인해 주세요.</string>
+    <string name="denied">화면 공유를 허용해야 미러링할 수 있어요.</string>
+    <string name="notif_channel">미러링 상태</string>
+    <string name="notif_title">미러냥이 화면을 보내는 중</string>
+    <string name="hint">TV/PC와 폰이 같은 Wi-Fi에 있어야 해요.\n삼성 TV는 \"인터넷\" 앱에서 주소를 입력하세요.\n화면이 안 나오면 주소 끝에 /?mode=jpeg 를 붙여 보세요.</string>
+</resources>

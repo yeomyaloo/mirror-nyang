@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cream">#FFF6EC</color>
+    <color name="peach">#FF9F7A</color>
+    <color name="brown">#5B3A29</color>
+
+    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/cream</item>
+        <item name="android:statusBarColor">@color/peach</item>
+        <item name="android:colorAccent">@color/peach</item>
+        <item name="android:colorPrimary">@color/peach</item>
+    </style>
+</resources>

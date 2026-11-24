@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 미러냥 아이콘: 복숭아색 동그라미 위 고양이 얼굴 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#FF9F7A" android:pathData="M54,4a50,50 0,1 1,0 100a50,50 0,1 1,0 -100z" />
+    <!-- 귀 -->
+    <path android:fillColor="#FFF6EC" android:pathData="M28,46 L32,20 L50,36 Z" />
+    <path android:fillColor="#FFF6EC" android:pathData="M80,46 L76,20 L58,36 Z" />
+    <!-- 얼굴 -->
+    <path android:fillColor="#FFF6EC" android:pathData="M54,32c18,0 30,11 30,26c0,15 -13,24 -30,24c-17,0 -30,-9 -30,-24c0,-15 12,-26 30,-26z" />
+    <!-- 눈 -->
+    <path android:fillColor="#5B3A29" android:pathData="M42,56m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" />
+    <path android:fillColor="#5B3A29" android:pathData="M66,56m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" />
+    <!-- 코와 입 -->
+    <path android:fillColor="#FF7A8A" android:pathData="M50,63 L58,63 L54,67 Z" />
+    <path android:strokeColor="#5B3A29" android:strokeWidth="2" android:fillColor="#00000000"
+        android:pathData="M54,67 q-4,5 -8,2 M54,67 q4,5 8,2" />
+</vector>

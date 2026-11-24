@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.mirrornyang.app'
+    // 이 PC에 이미 설치된 SDK(android-30, build-tools 30.0.3)에 맞춘 값
+    compileSdk 30
+
+    defaultConfig {
+        applicationId 'com.mirrornyang.app'
+        minSdk 24
+        targetSdk 30
+        versionCode 1
+        versionName '0.1.0'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    // 접속 주소 QR 코드 생성용
+    implementation 'com.google.zxing:core:3.5.1'
+}
