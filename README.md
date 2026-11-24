@@ -1,7 +1,7 @@
 # 🐱 MirrorNyang (미러냥)
 
-**Mirror your Android phone screen to a smart TV or PC browser over the same Wi-Fi.**
-**같은 Wi-Fi에서 안드로이드 폰 화면을 스마트 TV나 PC 브라우저로 미러링하는 앱입니다.**
+**Mirror your Android phone or iPhone screen to a smart TV or PC browser over the same Wi-Fi.**
+**같은 Wi-Fi에서 안드로이드 폰이나 아이폰 화면을 스마트 TV나 PC 브라우저로 미러링하는 앱입니다.**
 
 [English](#english) · [한국어](#한국어)
 
@@ -9,18 +9,17 @@
 
 ## English
 
-MirrorNyang streams your Android phone screen to **any browser on the same Wi-Fi**, such as a Samsung TV's built-in browser or Chrome/Edge on a PC.
+MirrorNyang streams your Android phone or iPhone screen to **any browser on the same Wi-Fi**, such as a Samsung TV's built-in browser or Chrome/Edge on a PC.
 Nothing needs to be installed on the TV or PC. You only type an address into the browser.
 
 ("Nyang" is the Korean sound a cat makes, like "meow". 🐾)
 
 ### 📥 Download
 
-**[Get the latest APK (Releases)](https://github.com/yeomyaloo/mirror-nyang/releases/latest)**
+**[Get the latest release](https://github.com/yeomyaloo/mirror-nyang/releases/latest)**
 
-- Open the link on your phone, download `mirror-nyang-vX.Y.Z.apk`, and install it.
-- You need to allow installing apps from unknown sources.
-- Works on Android 7.0 and later.
+- **Android:** Open the link on your phone, download `mirror-nyang-vX.Y.Z.apk`, and install it. You need to allow installing apps from unknown sources. Works on Android 7.0 and later.
+- **iPhone:** Download `mirror-nyang-vX.Y.Z.ipa`. iPhones can't install apps straight from a link, so you install it with a free tool and your Apple ID. See [iPhone install guide](#iphone-install-guide) below. Works on iOS 15 and later.
 
 ```
 [Phone: MirrorNyang]  screen capture → H.264 encoding → tiny web server (:8080)
@@ -51,6 +50,49 @@ Nothing needs to be installed on the TV or PC. You only type an address into the
 
 If high-quality mode shows nothing for 8 seconds, the page switches to compatibility mode automatically. You can also switch with the button in the bottom-right corner.
 
+### iPhone
+
+#### How to use on iPhone
+
+1. Open **미러냥** once. Allow **Local Network** access when asked. Without it, the TV or PC can't connect.
+2. Tap the round button and choose **Start Broadcast**.
+   You can also long-press the **Screen Recording** button in Control Center, choose **미러냥**, and tap **Start Broadcast**.
+3. Type the address shown in the app (for example `http://192.168.0.12:8080`) into the TV or PC browser, the same as on Android.
+4. To stop, tap the red indicator at the top of the screen, or use Control Center.
+
+#### iPhone install guide
+
+Apple doesn't let iPhones install apps from a download link the way Android does with APKs. Without the App Store, the free way is to **sign the app with your own Apple ID** using a tool on your computer. Here is what you need to know first.
+
+| | |
+|---|---|
+| Cost | Free. A normal Apple ID is enough. |
+| What you need | A Windows PC or Mac, and a USB cable for the first install. |
+| 7-day limit | Apps signed with a free Apple ID **stop opening after 7 days**. You must refresh them (re-sign). Your data is kept. |
+| 3-app limit | A free Apple ID can have **only 3 sideloaded apps** at a time. AltStore itself counts as one. |
+| Trust step | After installing, you must trust your Apple ID once in Settings. |
+
+**Option A: AltStore (recommended, refreshes automatically)**
+
+1. On your computer, install **AltServer** from [altstore.io](https://altstore.io).
+   On Windows, you also need **iTunes** and **iCloud** downloaded from Apple's website (not the Microsoft Store versions).
+2. Connect the iPhone with a cable. In AltServer, choose **Install AltStore** and sign in with your Apple ID.
+3. On the iPhone, open **Settings → General → VPN & Device Management**, tap your Apple ID, and tap **Trust**.
+4. Download `mirror-nyang-vX.Y.Z.ipa` on the iPhone (Safari → save to Files).
+5. Open **AltStore → My Apps → +** and pick the IPA.
+6. **Auto-refresh:** Keep AltServer running on your computer. When the iPhone and computer are on the same Wi-Fi, AltStore re-signs the app in the background before the 7 days run out. If you miss it, open AltStore and tap **Refresh All** while AltServer is running.
+
+**Option B: Sideloadly (simpler, no auto-refresh)**
+
+1. Install **Sideloadly** from [sideloadly.io](https://sideloadly.io) on your computer (Windows or Mac).
+2. Connect the iPhone with a cable, drag `mirror-nyang-vX.Y.Z.ipa` into Sideloadly, enter your Apple ID, and press **Start**.
+3. On the iPhone, open **Settings → General → VPN & Device Management**, tap your Apple ID, and tap **Trust**.
+4. Every 7 days, repeat step 2 to keep the app working.
+
+> On iOS 16 and later, you may also need to turn on **Settings → Privacy & Security → Developer Mode** and restart.
+
+**Why not TestFlight or the App Store?** Those need a paid Apple Developer account ($99/year), so they're not used for now.
+
 ### Building the APK
 
 Requirements: JDK 17 and the Android SDK (platform `android-30`, build-tools `30.0.3`).
@@ -75,9 +117,29 @@ git tag v0.2.0
 git push origin main --tags
 ```
 
-GitHub Actions (`.github/workflows/release.yml`) builds the APK and attaches it to the release as `mirror-nyang-v0.2.0.apk`.
+GitHub Actions (`.github/workflows/release.yml`) builds both apps and attaches them to the release as `mirror-nyang-v0.2.0.apk` and `mirror-nyang-v0.2.0.ipa`. For the iOS version, also update `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `ios/project.yml`.
 
 The APK is signed with a public debug key kept in the repo (`app/debug.keystore`). Every build has the same signature, so users can install new versions over old ones. This key is not secret, so create a separate release key before publishing to the Play Store.
+
+The IPA is **unsigned**. AltStore or Sideloadly signs it with the user's Apple ID during install.
+
+### Building the iOS app (Mac)
+
+The Xcode project is generated from `ios/project.yml` with [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+
+```bash
+brew install xcodegen
+```
+
+```bash
+cd ios && xcodegen generate && open MirrorNyang.xcodeproj
+```
+
+To run on your own iPhone from Xcode, pick your Apple ID team under **Signing & Capabilities** for both the `MirrorNyang` and `MirrorNyangBroadcast` targets, then press Run. With a free Apple ID you may need to change the bundle IDs (for example `com.yourname.mirrornyang` and `com.yourname.mirrornyang.broadcast`).
+
+- `ios/MirrorNyang/`: the app screen (broadcast button and address)
+- `ios/MirrorNyangBroadcast/`: the ReplayKit broadcast upload extension (H.264 with VideoToolbox, HTTP/WebSocket server with Network.framework). It reuses the receiver page from `app/src/main/assets/`.
+- The broadcast extension may use only about 50 MB of memory, so video is capped at 1280 px on the long side.
 
 ### Installing on a phone
 
@@ -121,16 +183,15 @@ adb install -r app\build\outputs\apk\debug\app-debug.apk
 
 ## 한국어
 
-같은 Wi-Fi에 있는 **삼성 TV나 PC 브라우저로 안드로이드 폰 화면을 보내는** 미러링 앱입니다.
+같은 Wi-Fi에 있는 **삼성 TV나 PC 브라우저로 안드로이드 폰이나 아이폰 화면을 보내는** 미러링 앱입니다.
 TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주소만 입력하면 됩니다.
 
 ### 📥 다운로드
 
-**[최신 APK 받기 (Releases)](https://github.com/yeomyaloo/mirror-nyang/releases/latest)**
+**[최신 버전 받기 (Releases)](https://github.com/yeomyaloo/mirror-nyang/releases/latest)**
 
-- 폰에서 위 링크를 열고 `mirror-nyang-vX.Y.Z.apk`를 받아 설치합니다.
-- 설치할 때 "출처를 알 수 없는 앱" 설치를 허용해야 합니다.
-- Android 7.0 이상에서 동작합니다.
+- **안드로이드:** 폰에서 위 링크를 열고 `mirror-nyang-vX.Y.Z.apk`를 받아 설치합니다. 설치할 때 "출처를 알 수 없는 앱" 설치를 허용해야 합니다. Android 7.0 이상에서 동작합니다.
+- **아이폰:** `mirror-nyang-vX.Y.Z.ipa`를 받습니다. 아이폰은 링크로 바로 설치할 수 없어서, 컴퓨터의 무료 도구와 내 Apple ID로 설치해야 합니다. 아래 [아이폰 설치 방법](#아이폰-설치-방법)을 꼭 읽어 주세요. iOS 15 이상에서 동작합니다.
 
 ```
 [폰: 미러냥]  화면 캡처 → H.264 인코딩 → 작은 웹 서버(:8080)
@@ -159,6 +220,49 @@ TV와 PC에는 아무것도 설치하지 않아도 되고, 브라우저에 주�
 | 호환 | `http://폰IP:8080/?mode=jpeg` | JPEG 사진을 연속으로 보냅니다(약 12fps). 오래된 TV 브라우저에서도 잘 됩니다. |
 
 고화질 모드로 8초 동안 화면이 안 나오면 호환 모드로 자동으로 바뀝니다. 화면 오른쪽 아래 버튼으로 직접 바꿀 수도 있습니다.
+
+### 아이폰
+
+#### 아이폰에서 쓰는 법
+
+1. **미러냥** 앱을 한 번 엽니다. **로컬 네트워크** 권한을 물어보면 **허용**을 누릅니다. 허용하지 않으면 TV나 PC가 접속할 수 없습니다.
+2. 동그라미 버튼을 누르고 **방송 시작**을 누릅니다.
+   제어 센터의 **화면 기록** 버튼을 길게 누르고 **미러냥**을 고른 뒤 **방송 시작**을 눌러도 됩니다.
+3. 앱에 보이는 주소(예: `http://192.168.0.12:8080`)를 TV나 PC 브라우저에 입력합니다. 안드로이드와 똑같습니다.
+4. 끝낼 때는 화면 위쪽의 빨간 표시를 누르거나 제어 센터에서 방송을 멈춥니다.
+
+#### 아이폰 설치 방법
+
+아이폰은 안드로이드의 APK처럼 링크를 눌러 앱을 설치할 수 없습니다. App Store 없이 무료로 설치하려면, 컴퓨터의 도구로 **내 Apple ID로 앱에 서명해서** 설치해야 합니다. 시작하기 전에 아래 내용을 꼭 알아두세요.
+
+| | |
+|---|---|
+| 비용 | 무료입니다. 평소 쓰는 Apple ID면 됩니다. |
+| 필요한 것 | Windows PC나 Mac, 처음 설치할 때 쓸 USB 케이블 |
+| 7일 제한 | 무료 Apple ID로 설치한 앱은 **7일이 지나면 열리지 않습니다.** 그 전에 갱신(다시 서명)해야 합니다. 앱 데이터는 지워지지 않습니다. |
+| 3개 제한 | 무료 Apple ID로는 이렇게 설치한 앱을 **동시에 3개까지만** 쓸 수 있습니다. AltStore도 1개로 칩니다. |
+| 개발자 신뢰 | 설치한 뒤 설정에서 내 Apple ID를 한 번 "신뢰"해야 합니다. |
+
+**방법 A: AltStore (추천, 자동 갱신)**
+
+1. 컴퓨터에 [altstore.io](https://altstore.io)에서 **AltServer**를 설치합니다.
+   Windows에서는 **iTunes**와 **iCloud**도 설치해야 합니다. Microsoft Store 버전이 아니라 Apple 홈페이지에서 받은 버전이어야 합니다.
+2. 아이폰을 케이블로 연결하고, AltServer에서 **Install AltStore**를 누른 뒤 Apple ID로 로그인합니다.
+3. 아이폰에서 **설정 → 일반 → VPN 및 기기 관리**에 들어가 내 Apple ID를 누르고 **신뢰**를 누릅니다.
+4. 아이폰 Safari에서 `mirror-nyang-vX.Y.Z.ipa`를 받아 "파일" 앱에 저장합니다.
+5. **AltStore → My Apps → +**를 누르고 받은 IPA를 고릅니다.
+6. **자동 갱신:** 컴퓨터에 AltServer를 켜두세요. 아이폰과 컴퓨터가 같은 Wi-Fi에 있으면 7일이 지나기 전에 AltStore가 백그라운드에서 다시 서명해 줍니다. 7일 안에 한 번은 컴퓨터가 켜져 있어야 합니다. 놓쳤다면 AltServer를 켠 상태에서 AltStore의 **Refresh All**을 누르면 됩니다.
+
+**방법 B: Sideloadly (더 간단, 자동 갱신 없음)**
+
+1. 컴퓨터(Windows나 Mac)에 [sideloadly.io](https://sideloadly.io)에서 **Sideloadly**를 설치합니다.
+2. 아이폰을 케이블로 연결하고, `mirror-nyang-vX.Y.Z.ipa`를 Sideloadly 창에 끌어다 놓은 뒤 Apple ID를 입력하고 **Start**를 누릅니다.
+3. 아이폰에서 **설정 → 일반 → VPN 및 기기 관리**에 들어가 내 Apple ID를 누르고 **신뢰**를 누릅니다.
+4. 7일마다 2번을 다시 해야 앱이 계속 열립니다.
+
+> iOS 16 이상에서는 **설정 → 개인정보 보호 및 보안 → 개발자 모드**를 켜고 재시동해야 할 수도 있습니다.
+
+**왜 TestFlight나 App Store가 아닌가요?** 둘 다 유료 Apple 개발자 계정(연 $99)이 필요해서 지금은 쓰지 않습니다.
 
 ### APK 빌드 (Windows)
 
@@ -200,7 +304,27 @@ git tag v0.2.0
 git push origin main --tags
 ```
 
-태그가 올라가면 GitHub Actions(`.github/workflows/release.yml`)가 APK를 빌드해서 Release에 `mirror-nyang-v0.2.0.apk`로 첨부합니다.
+태그가 올라가면 GitHub Actions(`.github/workflows/release.yml`)가 두 앱을 빌드해서 Release에 `mirror-nyang-v0.2.0.apk`와 `mirror-nyang-v0.2.0.ipa`로 첨부합니다. 아이폰판 버전은 `ios/project.yml`의 `MARKETING_VERSION`과 `CURRENT_PROJECT_VERSION`도 같이 올리세요.
+
+IPA는 **서명하지 않은 상태**로 올라갑니다. 사용자가 설치할 때 AltStore나 Sideloadly가 그 사람의 Apple ID로 서명합니다.
+
+### 아이폰 앱 빌드 (Mac)
+
+Xcode 프로젝트는 [XcodeGen](https://github.com/yonaskolb/XcodeGen)으로 `ios/project.yml`에서 만듭니다.
+
+```bash
+brew install xcodegen
+```
+
+```bash
+cd ios && xcodegen generate && open MirrorNyang.xcodeproj
+```
+
+Xcode에서 내 아이폰으로 바로 실행하려면 `MirrorNyang`과 `MirrorNyangBroadcast` 두 타깃 모두 **Signing & Capabilities**에서 내 Apple ID 팀을 고르고 Run을 누릅니다. 무료 Apple ID에서는 번들 ID를 바꿔야 할 수도 있습니다(예: `com.yourname.mirrornyang`, `com.yourname.mirrornyang.broadcast`).
+
+- `ios/MirrorNyang/`: 앱 화면(방송 버튼, 접속 주소)
+- `ios/MirrorNyangBroadcast/`: ReplayKit 방송 확장입니다. VideoToolbox로 H.264를 만들고, Network.framework로 HTTP/WebSocket 서버를 돌립니다. 수신 페이지는 `app/src/main/assets/`의 것을 같이 씁니다.
+- 방송 확장은 메모리를 약 50MB까지만 쓸 수 있어서 영상 긴 변을 1280px로 제한했습니다.
 
 APK는 저장소에 들어 있는 공개 디버그 키(`app/debug.keystore`)로 서명합니다. 그래서 누가 빌드해도 서명이 같고, 사용자는 새 버전을 덮어 설치할 수 있습니다. 비밀 키가 아니므로 Play 스토어에 올릴 때는 별도의 릴리스 키를 만들어야 합니다.
 
