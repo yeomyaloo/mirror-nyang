@@ -44,6 +44,10 @@ class StreamServer(
     private val clients = CopyOnWriteArrayList<WsClient>()
     private var serverSocket: ServerSocket? = null
 
+    /** 설정되면, WebSocket 접속 시 쿼리스트링 `t=값` 이 이 토큰과 같아야 한다 (인증). */
+    @Volatile
+    var authToken: String? = null
+
     /** 가장 최근의 SPS/PPS. 새 H.264 수신기에게 가장 먼저 보내야 한다. */
     @Volatile
     var h264Config: ByteArray? = null
@@ -150,7 +154,9 @@ class StreamServer(
             val parts = requestLine.split(' ')
             if (parts.size < 2) return socket.close()
             val method = parts[0]
-            val path = parts[1].substringBefore('?')
+            val target = parts[1]
+            val path = target.substringBefore('?')
+            val query = target.substringAfter('?', "")
 
             val isUpgrade = headers["upgrade"]?.equals("websocket", ignoreCase = true) == true
             if (isUpgrade && path.startsWith("/ws/")) {
@@ -158,6 +164,11 @@ class StreamServer(
                     "/ws/h264" -> Kind.H264
                     "/ws/jpeg" -> Kind.JPEG
                     else -> return respond(socket, 404, "text/plain", "not found".toByteArray())
+                }
+                // 인증: 토큰이 설정돼 있으면 ?t= 값이 일치해야 화면을 보낸다 (CWE-306 방지)
+                val expected = authToken
+                if (expected != null && !constantTimeEquals(queryParam(query, "t"), expected)) {
+                    return respond(socket, 401, "text/plain", "unauthorized".toByteArray())
                 }
                 val key = headers["sec-websocket-key"]
                     ?: return respond(socket, 400, "text/plain", "missing key".toByteArray())
@@ -184,9 +195,29 @@ class StreamServer(
 
     private fun asset(name: String): ByteArray = context.assets.open(name).use { it.readBytes() }
 
+    private fun queryParam(query: String, name: String): String? {
+        if (query.isEmpty()) return null
+        for (pair in query.split('&')) {
+            val idx = pair.indexOf('=')
+            if (idx > 0 && pair.substring(0, idx) == name) return pair.substring(idx + 1)
+        }
+        return null
+    }
+
+    /** 토큰 비교(타이밍 공격 완화를 위해 길이·내용을 상수 시간에 가깝게 비교). */
+    private fun constantTimeEquals(a: String?, b: String): Boolean {
+        if (a == null) return false
+        val x = a.toByteArray(Charsets.US_ASCII)
+        val y = b.toByteArray(Charsets.US_ASCII)
+        if (x.size != y.size) return false
+        var r = 0
+        for (i in x.indices) r = r or (x[i].toInt() xor y[i].toInt())
+        return r == 0
+    }
+
     private fun respond(socket: Socket, code: Int, type: String, body: ByteArray) {
         val reason = when (code) {
-            200 -> "OK"; 400 -> "Bad Request"; 404 -> "Not Found"; 405 -> "Method Not Allowed"; else -> "Error"
+            200 -> "OK"; 400 -> "Bad Request"; 401 -> "Unauthorized"; 404 -> "Not Found"; 405 -> "Method Not Allowed"; else -> "Error"
         }
         socket.getOutputStream().use { out ->
             out.write(

@@ -21,6 +21,8 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
+import android.util.Base64
+import java.security.SecureRandom
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -77,11 +79,13 @@ class MirrorService : Service(), StreamServer.Listener {
 
             readScreenSize()
             val s = StreamServer(this, this)
+            val token = newToken()
+            s.authToken = token
             s.start(8080)
             server = s
             acquireLocks()
 
-            urls = NetUtil.localIpv4Addresses().map { "http://$it:${s.port}" }
+            urls = NetUtil.localIpv4Addresses().map { "http://$it:${s.port}/?t=$token" }
             running = true
             updateNotification()
             notifyStatus()
@@ -108,6 +112,13 @@ class MirrorService : Service(), StreamServer.Listener {
         val scale = min(1.0, maxSide.toDouble() / max(screenW, screenH))
         fun align(v: Double) = max(16, (v / 16).roundToInt() * 16)
         return align(screenW * scale) to align(screenH * scale)
+    }
+
+    /** 접속 인증용 무작위 토큰(128비트). QR/URL에 실려 뷰어에 전달된다. */
+    private fun newToken(): String {
+        val bytes = ByteArray(16)
+        SecureRandom().nextBytes(bytes)
+        return Base64.encodeToString(bytes, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING)
     }
 
     // ------------------------------------------------ StreamServer.Listener

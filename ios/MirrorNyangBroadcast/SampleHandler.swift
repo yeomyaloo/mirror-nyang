@@ -10,6 +10,7 @@ class SampleHandler: RPBroadcastSampleHandler {
 
     override func broadcastStarted(withSetupInfo setupInfo: [String: NSObject]?) {
         let server = StreamServer(port: MirrorConfig.port)
+        server.authToken = MirrorConfig.currentToken()
         let encoder = H264Encoder { [weak server, weak self] data, isKey, isConfig in
             if server?.broadcastH264(data, isKey: isKey, isConfig: isConfig) == true {
                 self?.h264?.requestKeyFrame()
