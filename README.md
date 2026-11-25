@@ -187,13 +187,16 @@ adb install -r app\build\outputs\apk\debug\app-debug.apk
 - Encoding starts only when the first viewer connects.
 - A slow viewer drops queued frames and resumes from the next key frame, and the page jumps to the live edge when its buffer grows past 0.5 s. So latency does not build up.
 
-> ⚠️ Anyone on the same Wi-Fi who knows the address can watch. Don't use it on public Wi-Fi. A PIN is planned.
+### Security
+
+- **Access needs a token.** Each session generates a random 128-bit token. The phone embeds it in the address/QR, and the server rejects any stream connection whose `?t=` value does not match. So only someone who scanned the QR (or typed the full address) can watch — not just anyone who knows the IP and port.
+- **Traffic is not encrypted (cleartext), by design.** Adding TLS or payload encryption would break old TV browsers (certificate warnings, or a missing Web Crypto API) — a main target of this app. The token prevents unauthorized *access*, but on an untrusted or public Wi-Fi an attacker positioned on the network path could still *sniff* the frames. **Use MirrorNyang on a Wi-Fi you trust (home/office), not on public Wi-Fi.**
 
 ### Roadmap
 
 - Audio (Android 10 and later, AudioPlaybackCapture)
 - Following screen rotation
-- Connection PIN
+- Optional end-to-end encryption (for untrusted Wi-Fi) — trades off old-TV compatibility
 - Quality and bitrate settings
 
 ---
@@ -419,9 +422,14 @@ app/src/main/
 - **기기는 주소를 화면에 표시해서 연결합니다.** 브라우저는 mDNS 탐색을 할 수 없기 때문입니다. 카메라가 있는 기기를 위해 QR 코드도 같이 보여줍니다.
 - **compileSdk/targetSdk는 30입니다.** 이 PC에 설치된 SDK에 맞춘 값입니다. APK로 직접 배포하므로 Play 스토어의 targetSdk 요구사항과는 상관없습니다.
 
+### 보안
+
+- **접속에는 토큰이 필요합니다.** 방송을 시작할 때마다 128비트 무작위 토큰을 만들어 주소·QR에 함께 싣고, 서버는 `?t=` 값이 맞지 않는 접속을 거부합니다. 그래서 IP·포트만 아는 사람이 아니라 **QR을 스캔(또는 전체 주소를 입력)한 사람만** 화면을 볼 수 있습니다.
+- **전송은 암호화하지 않습니다(평문). 의도된 선택입니다.** TLS나 프레임 암호화를 넣으면 이 앱의 주 대상인 구형 TV 브라우저가 깨집니다(인증서 경고, 또는 Web Crypto 미지원). 토큰은 **무단 접속**은 막지만, 신뢰할 수 없는·공용 Wi-Fi에서는 네트워크 경로상의 공격자가 화면을 **엿볼** 수 있습니다. **집·사무실처럼 신뢰하는 Wi-Fi에서만 쓰고, 공용 Wi-Fi에서는 쓰지 마세요.**
+
 ### 다음 단계 아이디어
 
 - 소리 전송 (Android 10 이상, AudioPlaybackCapture)
 - 화면 회전 따라가기
-- 접속 PIN: 지금은 같은 Wi-Fi에 있는 누구나 주소를 알면 볼 수 있습니다. 공용 Wi-Fi에서는 쓰지 마세요.
+- 선택적 종단 암호화 (신뢰할 수 없는 Wi-Fi용) — 구형 TV 호환과 트레이드오프
 - 화질과 비트레이트 설정 화면

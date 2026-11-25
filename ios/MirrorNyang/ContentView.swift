@@ -1,6 +1,8 @@
+import CoreImage.CIFilterBuiltins
 import Network
 import ReplayKit
 import SwiftUI
+import UIKit
 
 private let cream = Color(red: 1.0, green: 0.965, blue: 0.925)
 private let peach = Color(red: 1.0, green: 0.624, blue: 0.478)
@@ -31,6 +33,15 @@ struct ContentView: View {
                             .font(.title2.bold())
                             .foregroundColor(Color(red: 0.85, green: 0.33, blue: 0.31))
                             .textSelection(.enabled)
+                        if let qr = Self.makeQR(address) {
+                            Image(uiImage: qr)
+                                .interpolation(.none)
+                                .resizable()
+                                .frame(width: 200, height: 200)
+                                .padding(.top, 4)
+                            Text("주소 입력이 번거로우면 이 QR을 스캔하세요 (접속 토큰 포함)")
+                                .font(.caption).foregroundColor(brown)
+                        }
                     } else {
                         Text("Wi-Fi 주소를 찾지 못했어요.\nWi-Fi에 연결했는지 확인해 주세요.")
                             .multilineTextAlignment(.center)
@@ -63,6 +74,16 @@ struct ContentView: View {
             address = NetworkInfo.receiverURL()
             LocalNetworkPermission.trigger()
         }
+    }
+
+    /// 주소(토큰 포함)를 QR 이미지로 만든다.
+    static func makeQR(_ string: String) -> UIImage? {
+        let filter = CIFilter.qrCodeGenerator()
+        filter.message = Data(string.utf8)
+        let context = CIContext()
+        guard let output = filter.outputImage?.transformed(by: CGAffineTransform(scaleX: 8, y: 8)),
+              let cg = context.createCGImage(output, from: output.extent) else { return nil }
+        return UIImage(cgImage: cg)
     }
 }
 

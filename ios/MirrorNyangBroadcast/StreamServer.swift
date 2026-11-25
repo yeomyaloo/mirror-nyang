@@ -35,6 +35,9 @@ final class StreamServer {
         init(_ connection: NWConnection) { self.connection = connection }
     }
 
+    /// 설정되면, WebSocket 접속 시 쿼리스트링 t=값 이 이 토큰과 같아야 한다 (인증).
+    var authToken: String?
+
     init(port: UInt16) {
         self.port = port
     }
@@ -142,7 +145,9 @@ final class StreamServer {
         let lines = head.components(separatedBy: "\r\n")
         let parts = (lines.first ?? "").split(separator: " ")
         guard parts.count >= 2 else { return remove(client) }
-        let path = String(parts[1].split(separator: "?", maxSplits: 1).first ?? "")
+        let rawTarget = String(parts[1])
+        let path = String(rawTarget.split(separator: "?", maxSplits: 1).first ?? "")
+        let query = rawTarget.firstIndex(of: "?").map { String(rawTarget[rawTarget.index(after: $0)...]) } ?? ""
         var headers: [String: String] = [:]
         for line in lines.dropFirst() {
             guard let idx = line.firstIndex(of: ":") else { continue }
@@ -151,6 +156,11 @@ final class StreamServer {
         }
 
         if headers["upgrade"]?.lowercased() == "websocket", let key = headers["sec-websocket-key"] {
+            // 인증: 토큰이 설정돼 있으면 ?t= 값이 일치해야 화면을 보낸다 (CWE-306 방지)
+            if let expected = authToken, !Self.constantTimeEquals(Self.queryParam(query, "t"), expected) {
+                respond(client, status: "401 Unauthorized", type: "text/plain", body: Data("unauthorized".utf8))
+                return
+            }
             switch path {
             case "/ws/h264": upgrade(client, key: key, kind: .h264)
             case "/ws/jpeg": upgrade(client, key: key, kind: .jpeg)
@@ -173,6 +183,24 @@ final class StreamServer {
         guard let url = Bundle.main.url(forResource: name, withExtension: ext),
               let data = try? Data(contentsOf: url) else { return Data("missing \(name).\(ext)".utf8) }
         return data
+    }
+
+    private static func queryParam(_ query: String, _ name: String) -> String? {
+        for pair in query.split(separator: "&") {
+            let kv = pair.split(separator: "=", maxSplits: 1)
+            if kv.count == 2 && kv[0] == name { return String(kv[1]) }
+        }
+        return nil
+    }
+
+    /// 토큰 비교(타이밍 공격 완화를 위해 길이·내용을 상수 시간에 가깝게 비교).
+    private static func constantTimeEquals(_ a: String?, _ b: String) -> Bool {
+        guard let a = a else { return false }
+        let x = Array(a.utf8), y = Array(b.utf8)
+        if x.count != y.count { return false }
+        var r: UInt8 = 0
+        for i in 0..<x.count { r |= x[i] ^ y[i] }
+        return r == 0
     }
 
     private func respond(_ client: Client, status: String, type: String, body: Data) {

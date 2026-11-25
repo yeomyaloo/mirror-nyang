@@ -44,6 +44,8 @@
   var video = document.getElementById('player');
   var img = document.getElementById('jpg');
   var switchLink = document.getElementById('switch');
+  // QR/URL에 실려 온 접속 토큰(?t=...). WebSocket 연결에 그대로 붙인다.
+  var token = (location.search.match(/[?&]t=([^&]+)/) || [])[1] || '';
 
   function mseSupported() {
     var MS = window.MediaSource || window.WebKitMediaSource;
@@ -54,7 +56,7 @@
   var mode = (!forced && mseSupported()) ? 'h264' : 'jpeg';
 
   switchLink.textContent = mode === 'h264' ? '호환 모드(JPEG)' : '고화질 모드(H.264)';
-  switchLink.href = mode === 'h264' ? '/?mode=jpeg' : '/?mode=h264';
+  switchLink.href = (mode === 'h264' ? '/?mode=jpeg' : '/?mode=h264') + (token ? '&t=' + token : '');
 
   var hideTimer = null;
   function say(text, autoHide) {
@@ -79,7 +81,7 @@
   document.getElementById('fs').onclick = goFullscreen;
   document.getElementById('stage').ondblclick = goFullscreen;
 
-  function wsUrl(path) { return 'ws://' + location.host + path; }
+  function wsUrl(path) { return 'ws://' + location.host + path + (token ? '?t=' + token : ''); }
 
   function reconnectLater() {
     say('😿 연결이 끊겼어요. 다시 연결하는 중…', false);
@@ -126,7 +128,7 @@
     setTimeout(function () {
       if (!shown && gotData && video.readyState < 2) {
         say('이 브라우저는 고화질 모드가 어려워요. 호환 모드로 바꿀게요…', false);
-        setTimeout(function () { location.href = '/?mode=jpeg'; }, 1500);
+        setTimeout(function () { location.href = '/?mode=jpeg' + (token ? '&t=' + token : ''); }, 1500);
       }
     }, 8000);
   }
